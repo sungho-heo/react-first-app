@@ -1,13 +1,11 @@
-import logo from "./logo.svg"
-import "./App.css"
+import Button from "./Button.js"
+import style from "./App.module.css"
 
 function App() {
   return (
-    <div className='App'>
-      <header className='App-header'>
-        <img src={logo} className='App-logo' alt='logo' />
-        <p>Hello React</p>
-      </header>
+    <div>
+      <h2 className={style.title}>Welcome React</h2>
+      <Button text={"Home"} />
     </div>
   )
 }
