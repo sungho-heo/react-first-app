@@ -5,15 +5,15 @@ function App() {
   const counterUp = () => setCounter((current) => current + 1)
   const [word, changeWord] = useState("")
   const onChange = (event) => changeWord(event.target.value)
-  useEffect(() => {
-    console.log("이건 한번만 실행이 됩니다.")
-  }, [])
-  useEffect(() => {
-    console.log("Change word", word)
-  }, [word])
-  useEffect(() => {
-    console.log("Change count", counter)
-  }, [counter])
+  const Hello = () => {
+    useEffect(() => {
+      console.log("I'm here")
+      return () => console.log("bye")
+    }, [])
+    return <h1>Hello</h1>
+  }
+  const [showing, setShow] = useState(false)
+  const onClick = () => setShow((current) => !current)
   return (
     <div>
       <input value={word} onChange={onChange} placeholder='Search'></input>
@@ -21,6 +21,11 @@ function App() {
       <button className={style.btn} onClick={counterUp}>
         Click
       </button>
+      <hr />
+      <div>
+        {showing ? <Hello /> : null}
+        <button onClick={onClick}>{showing ? "Hide" : "Show"}</button>
+      </div>
     </div>
   )
 }
