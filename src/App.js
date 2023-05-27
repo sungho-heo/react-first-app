@@ -1,32 +1,34 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import axios from "axios"
 
 function App() {
-  const [todo, changeTodo] = useState("")
-  const [todoList, setTodos] = useState([])
-  const onChange = (event) => changeTodo(event.target.value)
-  const onSubmit = (event) => {
-    event.preventDefault()
-    if (todo === "") {
-      return
+  const [loading, setLoading] = useState(true)
+  const [coins, changeCoins] = useState([])
+  useEffect(() => {
+    const result = async () => {
+      try {
+        const data = await axios(
+          "https://api.coinpaprika.com/v1/tickers?limit=10"
+        ).json()
+        if (data.length > 0) {
+          changeCoins(data)
+          setLoading(false)
+        }
+      } catch (error) {
+        console.log(error)
+      }
     }
-    setTodos((current) => [todo, ...todoList])
-    changeTodo("")
-  }
+    result()
+  }, [])
   return (
     <div>
-      <form onSubmit={onSubmit}>
-        <input
-          value={todo}
-          onChange={onChange}
-          type='text'
-          placeholder='Todo'
-        ></input>
-        <button>Add To do</button>
-      </form>
-      <hr />
+      <h1>Coins:{coins.length}</h1>
+      {loading ? <strong>Loading...</strong> : null}
       <ul>
-        {todoList.map((value, index) => (
-          <li key={index}>{value}</li>
+        {coins.map((coin) => (
+          <li key={coin.id}>
+            {coin.name} ({coin.symbol}): ${coin.quotes.USD.price}USD
+          </li>
         ))}
       </ul>
     </div>
