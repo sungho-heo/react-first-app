@@ -1,68 +1,46 @@
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState } from "react"
 import axios from "axios"
 
 function App() {
-  const [loading, setLoading] = useState(true)
-  const [coins, changeCoins] = useState([])
-  const [money, setMoney] = useState(0)
-  const [myCoin, setMyCoin] = useState(0)
-  const onChange = (event) => {
-    setMoney(event.target.value)
-  }
-  const coinToUsd = (event) => {
-    const { value } = event.target
-    const regex = /[^0-9.]/g
-    const result = parseFloat(value.replace(regex, ""))
-    setMyCoin((money / result).toFixed(6))
-  }
-
-  const getData = useCallback(async () => {
+  const [loading, viewLoading] = useState(true)
+  const [movies, viewMovies] = useState([])
+  const getData = async () => {
     try {
-      const { data } = await axios.get(
-        "https://api.coinpaprika.com/v1/tickers?limit=10"
+      const json = await axios(
+        "https://yts.mx/api/v2/list_movies.json?minimum_rating=9&sort_by=year"
       )
-      if (data.length > 0) {
-        setLoading(false)
-        changeCoins(data)
+      const result = json.data.data.movies
+      if (result.length > 0) {
+        viewMovies(result)
+        viewLoading(false)
       }
-    } catch (error) {
-      console.log(error)
+    } catch (err) {
+      throw new Error(err)
     }
-  }, [])
+  }
   useEffect(() => {
     getData()
-  }, [getData])
+  }, [])
   return (
     <div>
-      <h1>Coins:{coins.length}</h1>
+      <h1>The Best Movies</h1>
       {loading ? <strong>Loading...</strong> : null}
-      <select onChange={coinToUsd}>
-        {coins.map((coin) => (
-          <option key={coin.id}>
-            {coin.name} ({coin.symbol}): ${coin.quotes.USD.price}USD
-          </option>
+      <ul>
+        {movies.map((movie) => (
+          <div key={movie.id}>
+            <img src={movie.medium_cover_image} alt={movie.title} />
+            <h2>Title:{movie.title}</h2>
+            <span>Year:{movie.year}</span>
+            <p>Description:{movie.summary}</p>
+            <span>Genres</span>
+            <ul>
+              {movie.genres.map((genre) => (
+                <li key={genre}>{genre}</li>
+              ))}
+            </ul>
+          </div>
         ))}
-      </select>
-      <div>
-        <label htmlFor='money'>Money</label>
-        <input
-          onChange={onChange}
-          id='money'
-          type='number'
-          placeholder='You money'
-        ></input>
-        USD
-        <div>
-          <label htmlFor='coin'>Coin</label>
-          <input
-            value={myCoin}
-            id='coin'
-            type='number'
-            placeholder='You coin'
-            readOnly
-          ></input>
-        </div>
-      </div>
+      </ul>
     </div>
   )
 }
