@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import axios from "axios"
 import Movie from "../components/Movie.js"
 function Home() {
   const [loading, viewLoading] = useState(true)
   const [movies, viewMovies] = useState([])
-  const getData = async () => {
+  const getData = useCallback(async () => {
     try {
       const json = await axios(
         "https://yts.mx/api/v2/list_movies.json?minimum_rating=9&sort_by=year"
@@ -17,10 +17,10 @@ function Home() {
     } catch (err) {
       throw new Error(err)
     }
-  }
+  }, [])
   useEffect(() => {
     getData()
-  }, [])
+  }, [getData])
   return (
     <div>
       <h1>The Best Movies</h1>
@@ -31,6 +31,7 @@ function Home() {
           {movies.map((movie) => (
             <Movie
               key={movie.id}
+              id={movie.id}
               coverImg={movie.medium_cover_image}
               title={movie.title}
               year={movie.year}
