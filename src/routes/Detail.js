@@ -24,13 +24,13 @@ function Detail() {
   }, [getMovie])
   return (
     <div>
-      <h1>
-        {info.title}({info.year})
-      </h1>
       {loading ? (
         <strong>Loading...</strong>
       ) : (
         <div>
+          <h1>
+            {info.title}({info.year})
+          </h1>
           <img src={info.large_cover_image} alt={info.title} />
           <div>
             <label htmlFor='rate'>Rate: </label>
